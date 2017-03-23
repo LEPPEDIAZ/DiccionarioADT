@@ -1,28 +1,44 @@
-/*Basado en: 
- * The generic Binary Search Tree class (V.S. Adamchik 2010)
- * Tomado de: https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/code/BST.java
- * */
-
 import java.util.*;
 
+/**
+ * Basado en: 
+ * The generic Binary Search Tree class (V.S. Adamchik 2010)
+ * Tomado de: https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/code/BST.java
+ * @param <E> genérico
+ */
 
 public class BinaryTree<E extends Comparable<E>> implements Iterable<E> {
 	private Node<E> raiz;
 	private Comparator<E> comparador;
-	private ArrayList<String> recorrido;
+	private ArrayList<String> recorrido; //guarda el recorrido
 	
+	/**
+	 * Constructor de un árbol binario con comparador nulo
+	 */
 	public BinaryTree(){
 		raiz = null;
 		comparador = null;
 		recorrido = new ArrayList<String>();		
 	}
 	
+	
+	/**
+	 * Constructor de un árbol binario con un comparador
+	 * @param comparator
+	 */
 	BinaryTree(Comparator<E> comparator){
 		raiz = null;
 		comparador = comparator;
 		recorrido = new ArrayList<String>();
 	}
 	
+	
+	/**
+	 * Compara dos elementos
+	 * @param e1
+	 * @param e2
+	 * @return int
+	 */
 	private int compare(E e1, E e2){
 		if(comparador == null) 
 			return e1.compareTo(e2);
@@ -30,6 +46,11 @@ public class BinaryTree<E extends Comparable<E>> implements Iterable<E> {
 			return comparador.compare(e1, e2);
 	}
 	
+	/**
+	 * Busca un elemento en el árbol binario
+	 * @param busqueda, que es el elemento a ser buscado
+	 * @return
+	 */
 	public boolean buscar(E busqueda){
 		return buscar(raiz, busqueda);
 	}
@@ -45,6 +66,10 @@ public class BinaryTree<E extends Comparable<E>> implements Iterable<E> {
 			return buscar(algo.der, busqueda);
 	}
 	
+	/**
+	 * Inserta un dato o elemento al árbol binario
+	 * @param datos, el elemento que se quiere insertar
+	 */
 	public void insert(E datos){
 		raiz = insert(raiz, datos);
 	}
@@ -61,12 +86,21 @@ public class BinaryTree<E extends Comparable<E>> implements Iterable<E> {
 		return algo;
 	}
 	
+	/**
+	 * Devuelve un elemento
+	 * @param algo
+	 * @return
+	 */
 	private E recuperarDatos(Node<E> algo){
 		while(algo.der !=null)
 			algo = algo.der;
 		return algo.datos;
 	}
 	
+	/**
+	 * Elimina 	un elemento del árbol binario
+	 * @param borrar, el elemento a borrar
+	 */
 	public void delete(E borrar){
 		raiz = delete(raiz, borrar);
 	} 
@@ -91,13 +125,20 @@ public class BinaryTree<E extends Comparable<E>> implements Iterable<E> {
 		return algo;
 	}
 	
+	/**
+	 * Cadena de texto con todos los datos del árbol binario
+	 */
 	public String toString(){
 		StringBuffer buffer = new StringBuffer();
 		for(E datos:this)
-			buffer.append(datos.toString());
+			buffer.append(datos.toString()+ " ");
 		return buffer.toString();
 	}
 	
+	/**
+	 * Recorre el árbol en in-order
+	 * @param r
+	 */
 	private void inOrderHelper(Node r){
 		if(r != null){
 			inOrderHelper(r.izq);
@@ -105,15 +146,21 @@ public class BinaryTree<E extends Comparable<E>> implements Iterable<E> {
 			inOrderHelper(r.der);
 		}
 	}
-	
 	public void inOrderTraversal(){
 		inOrderHelper(raiz);
 	}
 	
+	/**
+	 * 
+	 * @return un ArrayList con el recorrido in-order
+	 */
 	public ArrayList<String> getTraversal(){
 		return this.recorrido;
 	}
 	
+	/**
+	 * Crea el iterador
+	 */
 	public Iterator<E> iterator(){
 		return new MyIterator();
 	}
