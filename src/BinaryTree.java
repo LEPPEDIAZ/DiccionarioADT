@@ -1,226 +1,138 @@
-import java.util.*;
-
-/**
- * Basado en: 
- * The generic Binary Search Tree class (V.S. Adamchik 2010)
- * Tomado de: https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/code/BST.java
- * @param <E> genérico
- */
-
-public class BinaryTree<E extends Comparable<E>> implements Iterable<E> {
-	private Node<E> raiz;
-	private Comparator<E> comparador;
-	private ArrayList<String> recorrido; //guarda el recorrido
-	
-	/**
-	 * Constructor de un árbol binario con comparador nulo
-	 */
+public class BinaryTree<T extends Asociasion<T>>{
+	private Node<T> root;
 	public BinaryTree(){
-		raiz = null;
-		comparador = null;
-		recorrido = new ArrayList<String>();		
+		this.root = null;
+	}
+
+	
+
+	public T find(T id){
+		Node<T> current = root;
+		while(current!=null){
+			if(current.data.equals(id)){
+				return current.data;
+			}else if(current.data.compareTo(id)>0){
+				current = current.left;
+			}else{
+				current = current.right;
+			}
+
+		}
+
+		return null;
+	}
+
+	public Node<T> getRoot() {
+		return root;
+	}
+
+
+
+	public void setRoot(Node<T> root) {
+		this.root = root;
+
 	}
 	
-	
-	/**
-	 * Constructor de un árbol binario con un comparador
-	 * @param comparator
-	 */
-	BinaryTree(Comparator<E> comparator){
-		raiz = null;
-		comparador = comparator;
-		recorrido = new ArrayList<String>();
-	}
-	
-	
-	/**
-	 * Compara dos elementos
-	 * @param e1
-	 * @param e2
-	 * @return int
-	 */
-	private int compare(E e1, E e2){
-		if(comparador == null) 
-			return e1.compareTo(e2);
-		else
-			return comparador.compare(e1, e2);
-	}
-	
-	/**
-	 * Busca un elemento en el árbol binario
-	 * @param busqueda, que es el elemento a ser buscado
-	 * @return
-	 */
-	public boolean buscar(E busqueda){
-		return buscar(raiz, busqueda);
-	}
-	
-	private boolean buscar(Node<E> algo, E busqueda){
-		if(algo==null)
-			return false;
-		else if(compare(busqueda, algo.datos)==0)
-			return true;
-		else if(compare(busqueda, algo.datos)<0)
-			return buscar(algo.izq, busqueda);
-		else
-			return buscar(algo.der, busqueda);
-	}
-	
-	/**
-	 * Inserta un dato o elemento al árbol binario
-	 * @param datos, el elemento que se quiere insertar
-	 */
-	public void insert(E datos){
-		raiz = insert(raiz, datos);
-	}
-	
-	private Node<E> insert (Node<E> algo, E insertar){
-		if (algo == null)
-			return new Node<E>(insertar);
-		if(compare(insertar, algo.datos)==0)
-			return algo;
-		if(compare(insertar, algo.datos)<0)
-			algo.izq = insert(algo.izq, insertar);
-		else
-			algo.der = insert(algo.der, insertar);	
-		return algo;
-	}
-	
-	/**
-	 * Devuelve un elemento
-	 * @param algo
-	 * @return
-	 */
-	private E recuperarDatos(Node<E> algo){
-		while(algo.der !=null)
-			algo = algo.der;
-		return algo.datos;
-	}
-	
-	/**
-	 * Elimina 	un elemento del árbol binario
-	 * @param borrar, el elemento a borrar
-	 */
-	public void delete(E borrar){
-		raiz = delete(raiz, borrar);
-	} 
-	
-	private Node<E> delete(Node<E> algo, E borrar){
-		if(algo==null)
-			throw new RuntimeException("No puede ser borrado");
-		else if(compare(borrar, algo.datos)<0)
-			algo.izq = delete(algo.izq, borrar);
-		else if(compare(borrar, algo.datos)>0)
-			algo.der = delete(algo.der, borrar);
-		else{
-			if(algo.izq==null)
-				return algo.der;
-			else if(algo.der==null)
-				return algo.izq;
-			else{
-				algo.datos = recuperarDatos(algo.izq);
-				algo.izq = delete(algo.izq, algo.datos);
+		if(current.left==null && current.right==null){
+			if(current==root){
+				root = null;
+			}
+
+			if(isLeftChild ==true){
+				parent.left = null;
+			}else{
+				parent.right = null;
+			}
+
+		}
+
+		else if(current.right==null){
+			if(current==root){
+				root = current.left;
+			}else if(isLeftChild){
+				parent.left = current.left;
+			}else{
+				parent.right = current.left;
 			}
 		}
-		return algo;
+
+		else if(current.left==null){
+			if(current==root){
+				root = current.right;
+			}else if(isLeftChild){
+				parent.left = current.right;
+			}else{
+				parent.right = current.right;
+			}
+
+		}else if(current.left!=null && current.right!=null){
+
+
+			Node<T> successor	 = getSuccessor(current);
+			if(current==root){
+				root = successor;
+			}else if(isLeftChild){
+				parent.left = successor;
+			}else{
+				parent.right = successor;
+			}			
+			successor.left = current.left;
+		}		
+		return true;		
 	}
+
 	
-	/**
-	 * Cadena de texto con todos los datos del árbol binario
-	 */
-	public String toString(){
-		StringBuffer buffer = new StringBuffer();
-		for(E datos:this)
-			buffer.append(datos.toString()+ " ");
-		return buffer.toString();
-	}
-	
-	/**
-	 * Recorre el árbol en in-order
-	 * @param r
-	 */
-	private void inOrderHelper(Node r){
-		if(r != null){
-			inOrderHelper(r.izq);
-			recorrido.add(r.toString());
-			inOrderHelper(r.der);
+
+	public Node<T> getNext(Node<T> deleleNode){
+		Node<T> next =null;
+		Node<T> nextParent =null;
+		Node<T> current = deleleNode.right;
+		while(current!=null){
+			nextParent = next;
+			nexy = current;
+			current = current.left;
 		}
-	}
-	public void inOrderTraversal(){
-		inOrderHelper(raiz);
-	}
-	
-	/**
-	 * 
-	 * @return un ArrayList con el recorrido in-order
-	 */
-	public ArrayList<String> getTraversal(){
-		return this.recorrido;
-	}
-	
-	/**
-	 * Crea el iterador
-	 */
-	public Iterator<E> iterator(){
-		return new MyIterator();
-	}
-	
-	private class MyIterator implements Iterator<E>{
-		Stack<Node<E>> stack = new Stack<Node<E>>();
-		
-		public MyIterator(){
-			if(raiz !=null)stack.push(raiz);
+		if(next!=deleleNode.right){
+			nextParent.left = next.right;
+			next.right = deleleNode.right;
 		}
-		
-		public boolean hasNext(){
-			return !stack.isEmpty();
+		return next;
+	}
+
+	public void insert(T id){
+		Node<T> newNode = new Node<T>(id);
+		if(root==null){
+			root = newNode;
+			return;
 		}
-		
-		public E next(){
-			Node<E> cur = stack.peek();
-			if(cur.izq != null)
-				stack.push(cur.izq);
-			else{
-				Node<E> temp = stack.pop();
-				while(temp.der==null){
-					if(stack.isEmpty())
-						return cur.datos;
-					temp = stack.pop();
+		Node<T> current = root;
+		Node<T> parent = null;
+		while(true){
+			parent = current;
+			if(id.compareTo(current.data)<0){				
+				current = current.left;
+				if(current==null){
+					parent.left = newNode;
+					return;
 				}
-				stack.push(temp.der);
+			}else{
+				current = current.right;
+				if(current==null){
+					parent.right = newNode;
+					return;
+				}
 			}
-			return cur.datos;			
 		}
 	}
-	
-	public void remove(){
-		
-	}
-	
-	private class Node<E>{
-		private E datos;
-		private Node<E> izq;
-		private Node<E> der;
-		
-		public Node(E datos, Node<E> l, Node<E> r){
-			izq = l;
-			der = r;
-			this.datos = datos;
-		}
-		
-		public Node(E datos){
-			this(datos, null, null);
-		}
-		
-		public String toString(){
-			return datos.toString();
-		}	
-	}
-	
-	class comp implements Comparator<Integer>{
-		public int compare(Integer x, Integer y){
-			return y-x;
+
+	public void display(Node<T> root){
+		if(root!=null){
+			display(root.left);
+			System.out.print(root.data + " ");
+			display(root.right);
 		}
 	}
 }
 
+
+}
