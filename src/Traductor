@@ -1,0 +1,99 @@
+import java.io.BufferedReader;
+
+import java.io.FileReader;
+
+import java.io.IOException;
+
+
+
+public class Traductor<E> {
+
+
+
+	private String cadena = "";
+
+	private Arbol<E> arbol= null;
+
+	
+
+	public Traductor() throws IOException {
+
+		// TODO Auto-generated constructor stub
+
+		String palabras="";
+
+		BufferedReader br = new BufferedReader(new FileReader("freedic-eng-spa.txt"));//leer archivo diccionario.txt
+
+		try {
+
+		    StringBuilder sb = new StringBuilder();
+
+		    String line = br.readLine();										//leer linea
+
+		    while (line != null) {												//si hay linea
+
+		        sb.append(line);
+
+		        sb.append(System.lineSeparator());
+
+		        if(arbol==null){
+
+		        	arbol = new Arbol(new Association(line.substring(1, line.indexOf(',')),  line.substring(line.indexOf(',')+1,line.length()-1)) );//parcear linea y crear raiz y Association(ingles,espanol)
+
+		        }else{
+
+		        	arbol.Agregar(new Association(line.substring(1, line.indexOf(',')),  line.substring(line.indexOf(',')+1,line.length()-1)));		////parcear linea y agregar nodo y Association(ingles,espanol)
+
+		        }	
+
+		        line = br.readLine();											//leer linea
+
+		       
+
+		    }
+
+		    palabras = sb.toString();
+
+		} finally {
+
+		    br.close();
+
+		}
+
+	}
+
+
+
+	
+
+	public String traducir(String texto){	
+
+		//	tomado de http://stackoverflow.com/questions/4674850/converting-a-sentence-string-to-a-string-array-of-words-in-java
+
+			String[] words = texto.split("\\t+");								//divide cada vez que encuentra un espacio
+
+			for (int i = 0; i < words.length; i++) {
+
+			    // You may want to check for a non-word character before blindly
+
+			    // performing a replacement
+
+			    // It may also be necessary to adjust the character class
+
+				
+
+			    words[i] = words[i].replaceAll("[^\\w]", "");					//quita los espacios
+
+			   
+
+			    cadena = cadena  +arbol.Traducir(words[i])+" ";					//concatena cada palabra traducida
+
+			   
+
+			}
+
+			return  cadena;
+
+	}
+
+}
