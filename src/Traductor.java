@@ -12,7 +12,7 @@ public class Traductor<E> {
 
 	private String cadena = "";
 
-	private Arbol<E> arbol= null;
+	private Arbol<E> arbol= null; //lo tenia en mi correo con mi otra pareja pero se lo agregue al de alejandro
 
 	
 
@@ -22,15 +22,15 @@ public class Traductor<E> {
 
 		String palabras="";
 
-		BufferedReader br = new BufferedReader(new FileReader("freedic-eng-spa.txt"));//leer archivo diccionario.txt
+		BufferedReader br = new BufferedReader(new FileReader("freedic-eng-spa.txt"));
 
 		try {
 
 		    StringBuilder sb = new StringBuilder();
 
-		    String line = br.readLine();										//leer linea
+		    String line = br.readLine();									
 
-		    while (line != null) {												//si hay linea
+		    while (line != null) {												
 
 		        sb.append(line);
 
@@ -46,19 +46,11 @@ public class Traductor<E> {
 
 		        }	
 
-		        line = br.readLine();											//leer linea
-
+		        line = br.readLine();											
+			 palabras = sb.toString();
 		       
 
 		    }
-
-		    palabras = sb.toString();
-
-		} finally {
-
-		    br.close();
-
-		}
 
 	}
 
@@ -67,27 +59,15 @@ public class Traductor<E> {
 	
 
 	public String traducir(String texto){	
+		// lo copie de internet.
 
-		//	tomado de http://stackoverflow.com/questions/4674850/converting-a-sentence-string-to-a-string-array-of-words-in-java
-
-			String[] words = texto.split("\\t+");								//divide cada vez que encuentra un espacio
+		String[] words = texto.split("\\t+");								
 
 			for (int i = 0; i < words.length; i++) {
 
-			    // You may want to check for a non-word character before blindly
-
-			    // performing a replacement
-
-			    // It may also be necessary to adjust the character class
-
-				
-
-			    words[i] = words[i].replaceAll("[^\\w]", "");					//quita los espacios
-
-			   
-
-			    cadena = cadena  +arbol.Traducir(words[i])+" ";					//concatena cada palabra traducida
-
+				words[i] = words[i].replaceAll("[^\\w]", "");					
+			 	
+				cadena = cadena  +arbol.Traducir(words[i])+" ";					
 			   
 
 			}
